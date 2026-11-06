@@ -2,7 +2,7 @@
 @php($whatsappLink = $contact['whatsapp_url'].'?text='.rawurlencode($cta['whatsapp_message']))
 <section aria-labelledby="comece-agora-titulo" class="relative bg-white pb-20 sm:pb-24 lg:pb-28">
     <div class="container-site">
-        <div class="relative isolate overflow-hidden rounded-[2rem] bg-navy px-6 py-14 shadow-lift sm:px-12 sm:py-16 lg:px-16 lg:py-20" data-reveal>
+        <div class="on-dark relative isolate overflow-hidden rounded-[2rem] bg-navy px-6 py-14 shadow-lift sm:px-12 sm:py-16 lg:px-16 lg:py-20" data-reveal>
             <div class="pointer-events-none absolute inset-0 -z-10" aria-hidden="true">
                 <div class="absolute -right-24 -top-24 size-96 rounded-full bg-brand/50 blur-[100px]"></div>
                 <div class="absolute -bottom-32 left-1/4 size-80 rounded-full bg-accent/20 blur-[100px]"></div>
@@ -27,7 +27,7 @@
                         <x-icon name="whatsapp" class="size-5" />
                         {{ $cta['button'] }}
                     </a>
-                    <a href="tel:{{ $contact['phone_e164'] }}" class="inline-flex items-center gap-2 text-sm font-medium text-white/70 transition hover:text-white lg:justify-end">
+                    <a href="tel:{{ $contact['phone_e164'] }}" class="inline-flex min-h-11 items-center gap-2 text-sm font-medium text-white/75 transition hover:text-white lg:justify-end">
                         <x-icon name="phone" class="size-4 text-accent" />
                         ou ligue {{ $contact['phone_display'] }}
                     </a>

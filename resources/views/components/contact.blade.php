@@ -7,7 +7,7 @@
         ['icon' => 'instagram', 'label' => 'Instagram', 'value' => $contact['instagram_handle'], 'href' => $contact['instagram_url'], 'external' => true, 'cta' => 'Seguir'],
     ];
 @endphp
-<section id="contato" aria-labelledby="contato-titulo" class="section relative isolate overflow-hidden bg-navy">
+<section id="contato" aria-labelledby="contato-titulo" class="on-dark section relative isolate overflow-hidden bg-navy">
     <div class="pointer-events-none absolute inset-0 -z-10" aria-hidden="true">
         <div class="absolute -left-32 top-10 size-[30rem] rounded-full bg-brand/40 blur-[120px]"></div>
         <div class="absolute -right-20 bottom-0 size-96 rounded-full bg-royal/40 blur-[120px]"></div>

@@ -26,12 +26,12 @@
                             </span>
                         </button>
                     </h3>
-                    <div id="faq-resposta-{{ $i }}" role="region" aria-labelledby="faq-pergunta-{{ $i }}"
+                    <section id="faq-resposta-{{ $i }}" data-faq-answer aria-labelledby="faq-pergunta-{{ $i }}"
                          x-show="open === {{ $i }}" x-collapse @unless ($i === 0) x-cloak @endunless>
                         <div class="prose-answer px-6 pb-6 leading-relaxed text-muted sm:px-8 sm:pb-7">
                             {!! $item['answer'] !!}
                         </div>
-                    </div>
+                    </section>
                 </div>
             @endforeach
         </div>

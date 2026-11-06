@@ -106,7 +106,10 @@ APP_KEY=            # gere uma chave NOVA, exclusiva de produção
 ```
 
 - Gere a chave com SSH: `php artisan key:generate`. Sem SSH: rode `lando artisan key:generate --show` localmente e cole o valor. Não reutilize a chave do `.env` local.
+- `SITE_URL=https://www.solutionbpo.com.br` define a URL usada em canonical, Open Graph, sitemap e JSON-LD.
 - Nunca deixe `APP_DEBUG=true` em produção.
+- `APP_ENV=production` é o que libera a indexação (meta robots, `robots.txt` com `Allow` e a linha `Sitemap:`). Com qualquer outro valor, o site responde com `noindex`.
+- **Homologação pública** (antes da troca de domínio): use `APP_ENV=staging` e defina `STAGING_AUTH_USER` e `STAGING_AUTH_PASSWORD` para exigir senha. Essas variáveis são ignoradas em produção.
 - O `.env` nunca vai para o Git nem para o pacote.
 
 ## 6. Paths do index.php
@@ -172,8 +175,10 @@ Se o provedor exigir `RewriteBase /` (alguns exigem), adicione a linha logo apó
 - [ ] Abas de serviços, FAQ e menu mobile funcionam.
 - [ ] Botões de WhatsApp abrem a conversa com (13) 99633-8514.
 - [ ] Links de e-mail, telefone, Instagram e mapa funcionam.
-- [ ] `https://www.solutionbpo.com.br/robots.txt` mostra `Allow: /` e a linha `Sitemap:` correta.
-- [ ] `https://www.solutionbpo.com.br/sitemap.xml` abre.
+- [ ] `https://www.solutionbpo.com.br/robots.txt` mostra `Allow: /` e `Sitemap: https://www.solutionbpo.com.br/sitemap.xml`.
+- [ ] `https://www.solutionbpo.com.br/sitemap.xml` abre como XML e lista só `https://www.solutionbpo.com.br/`.
+- [ ] O código-fonte tem `<meta name="robots" content="index, follow…">` e a resposta não traz o cabeçalho `X-Robots-Tag`.
+- [ ] Sitemap enviado no Google Search Console.
 - [ ] `https://www.solutionbpo.com.br/contato` redireciona para `/#contato`.
 - [ ] `https://www.solutionbpo.com.br/.env` e `/assets/` retornam **403**.
 - [ ] Modo raiz: `/vendor/autoload.php`, `/config/site.php`, `/storage/logs/` e `/composer.json` retornam **403**.

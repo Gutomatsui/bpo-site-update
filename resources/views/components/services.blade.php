@@ -54,7 +54,7 @@
                                     <h4 class="text-xs font-bold uppercase tracking-[0.16em] text-brand">O que nós fazemos:</h4>
                                     <ul class="mt-4 grid gap-x-6 gap-y-3 sm:grid-cols-2">
                                         @foreach ($item['we_do'] as $task)
-                                            <li class="flex items-start gap-3 text-[0.95rem] leading-snug text-ink">
+                                            <li class="flex items-start gap-3 text-base leading-snug text-ink">
                                                 <span class="mt-0.5 grid size-5 shrink-0 place-items-center rounded-full bg-brand/10 text-brand">
                                                     <x-icon name="check" class="size-3.5" />
                                                 </span>
@@ -66,7 +66,7 @@
 
                                 @if (! empty($item['client']))
                                     <div class="mt-8 rounded-2xl bg-gradient-to-br from-amber-50 to-orange-50 p-5 ring-1 ring-accent/30">
-                                        <h4 class="text-xs font-bold uppercase tracking-[0.16em] text-accent-dark">{{ $item['client_label'] }}</h4>
+                                        <h4 class="text-xs font-bold uppercase tracking-[0.16em] text-accent-ink">{{ $item['client_label'] }}</h4>
                                         @foreach ($item['client'] as $clientTask)
                                             <p class="mt-2 font-medium leading-relaxed text-ink">{{ $clientTask }}</p>
                                         @endforeach

@@ -9,11 +9,11 @@
             </div>
 
             <div x-data="testimonialsSlider" class="testimonials-swiper min-w-0" data-reveal>
-                <div class="swiper" x-ref="swiper" aria-roledescription="carrossel" aria-label="Depoimentos de clientes">
+                <section class="swiper" x-ref="swiper" aria-roledescription="carrossel" aria-label="Depoimentos de clientes">
                     <div class="swiper-wrapper">
                         @foreach ($testimonials as $t)
-                            <figure class="swiper-slide h-auto!" role="group" aria-roledescription="slide" aria-label="{{ $loop->iteration }} de {{ count($testimonials) }}">
-                                <div class="relative flex h-full flex-col overflow-hidden rounded-[2rem] bg-gradient-to-br from-navy to-navy-600 p-8 text-white shadow-lift sm:p-12">
+                            <div class="swiper-slide h-auto!" role="group" aria-roledescription="slide" aria-label="{{ $loop->iteration }} de {{ count($testimonials) }}">
+                                <figure class="relative flex h-full flex-col overflow-hidden rounded-[2rem] bg-gradient-to-br from-navy to-navy-600 p-8 text-white shadow-lift sm:p-12">
                                     <x-icon name="quote" class="absolute right-8 top-8 size-20 text-white/5 sm:size-28" />
                                     <x-icon name="quote" class="size-9 text-accent" />
                                     <blockquote class="mt-6 flex-1 text-lg font-medium leading-relaxed text-white/90 sm:text-xl">
@@ -29,14 +29,20 @@
                                             <span class="block text-sm text-white/60">{{ $t['role'] }}</span>
                                         </span>
                                     </figcaption>
-                                </div>
-                            </figure>
+                                </figure>
+                            </div>
                         @endforeach
                     </div>
-                </div>
+                </section>
                 <div class="mt-6 flex items-center justify-between">
                     <div class="swiper-pagination !static !w-auto flex items-center" x-ref="pagination"></div>
                     <div class="flex gap-2">
+                        <button type="button" x-on:click="toggleAutoplay()" x-show="autoplayAvailable"
+                                class="inline-flex size-11 items-center justify-center rounded-full text-navy ring-1 ring-slate-200 transition hover:bg-surface"
+                                :aria-label="playing ? 'Pausar troca automática de depoimentos' : 'Retomar troca automática de depoimentos'" aria-label="Pausar troca automática de depoimentos">
+                            <x-icon name="pause" class="size-4" x-show="playing" />
+                            <x-icon name="play" class="size-4" x-show="!playing" x-cloak />
+                        </button>
                         <button type="button" x-ref="prev" aria-label="Depoimento anterior" class="inline-flex size-11 items-center justify-center rounded-full text-navy ring-1 ring-slate-200 transition hover:bg-navy hover:text-white disabled:opacity-40">
                             <x-icon name="chevron-left" />
                         </button>
@@ -50,12 +56,19 @@
 
         {{-- Clientes --}}
         <div class="mt-20 lg:mt-24" data-reveal>
-            <div class="flex items-center gap-6">
-                <h3 class="shrink-0 text-xs font-bold uppercase tracking-[0.18em] text-muted">Clientes que confiam na Solution</h3>
+            <div x-data="clientsSlider">
+            <div class="flex items-center gap-4 sm:gap-6">
+                <h3 class="text-xs font-bold uppercase tracking-[0.18em] text-muted">Clientes que confiam na Solution</h3>
                 <span class="h-px flex-1 bg-slate-200" aria-hidden="true"></span>
+                <button type="button" x-on:click="toggleAutoplay()" x-show="autoplayAvailable" x-cloak
+                        class="inline-flex size-11 shrink-0 items-center justify-center rounded-full text-navy ring-1 ring-slate-200 transition hover:bg-surface"
+                        :aria-label="playing ? 'Pausar rolagem automática dos logotipos' : 'Retomar rolagem automática dos logotipos'" aria-label="Pausar rolagem automática dos logotipos">
+                    <x-icon name="pause" class="size-4" x-show="playing" />
+                    <x-icon name="play" class="size-4" x-show="!playing" x-cloak />
+                </button>
             </div>
-            <div x-data="clientsSlider" class="mt-8">
-                <div class="swiper" x-ref="swiper" aria-label="Logotipos de clientes">
+            <div class="mt-8">
+                <section class="swiper" x-ref="swiper" aria-label="Logotipos de clientes">
                     <ul class="swiper-wrapper">
                         @foreach ($clients as $client)
                             <li class="swiper-slide h-auto!">
@@ -67,7 +80,8 @@
                             </li>
                         @endforeach
                     </ul>
-                </div>
+                </section>
+            </div>
             </div>
         </div>
     </div>

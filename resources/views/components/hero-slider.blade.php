@@ -1,6 +1,6 @@
 @props(['slides', 'width', 'height'])
 <section id="inicio" aria-roledescription="carrossel" aria-label="Destaques da Solution BPO"
-         class="relative isolate overflow-hidden bg-navy pb-10 pt-6 sm:pb-14 sm:pt-8 lg:pt-10">
+         class="on-dark relative isolate overflow-hidden bg-navy pb-10 pt-6 sm:pb-14 sm:pt-8 lg:pt-10">
     {{-- Fundo decorativo --}}
     <div class="pointer-events-none absolute inset-0 -z-10" aria-hidden="true">
         <div class="absolute -left-40 top-0 size-[36rem] rounded-full bg-brand/40 blur-[120px]"></div>
@@ -17,12 +17,12 @@
                             <div class="swiper-slide" role="group" aria-roledescription="slide" aria-label="{{ $i + 1 }} de {{ count($slides) }}">
                                 <picture>
                                     <source type="image/webp"
-                                            srcset="{{ asset($slide['image'].'-768.webp') }} 768w, {{ asset($slide['image'].'-1366.webp') }} 1366w"
+                                            srcset="{{ asset($slide['image'].'-480.webp') }} 480w, {{ asset($slide['image'].'-768.webp') }} 768w, {{ asset($slide['image'].'-1366.webp') }} 1366w"
                                             sizes="(min-width: 1280px) 1216px, calc(100vw - 32px)">
                                     <img src="{{ asset($slide['image'].'.png') }}" alt="{{ $slide['alt'] }}"
                                          width="{{ $width }}" height="{{ $height }}"
                                          class="block h-full w-full object-contain"
-                                         @if ($i === 0) fetchpriority="high" loading="eager" @else loading="lazy" @endif
+                                         @if ($i === 0) fetchpriority="high" loading="eager" @else fetchpriority="low" loading="lazy" @endif
                                          decoding="async">
                                 </picture>
                             </div>
@@ -42,7 +42,7 @@
                 </div>
                 <div class="flex items-center gap-2">
                     <button type="button" x-on:click="toggleAutoplay()"
-                            class="inline-flex size-10 items-center justify-center rounded-full text-white/80 ring-1 ring-white/15 transition hover:bg-white/10 hover:text-white"
+                            class="inline-flex size-11 items-center justify-center rounded-full text-white/80 ring-1 ring-white/15 transition hover:bg-white/10 hover:text-white"
                             :aria-label="playing ? 'Pausar rotação automática' : 'Retomar rotação automática'" aria-label="Pausar rotação automática">
                         <x-icon name="pause" class="size-4" x-show="playing" />
                         <x-icon name="play" class="size-4" x-show="!playing" x-cloak />
