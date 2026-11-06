@@ -1,0 +1,50 @@
+name: bpo-site-update
+recipe: lamp
+
+config:
+  php: '8.3'
+  via: apache
+  webroot: public
+  # O site institucional não usa banco de dados. O serviço MySQL 8 vem da
+  # receita LAMP e fica disponível para expansões futuras (ex.: formulários).
+  database: mysql:8.0
+  composer_version: 2
+  xdebug: false
+
+proxy:
+  appserver:
+    - bpo-site-update.lndo.site
+  node:
+    - vite.bpo-site-update.lndo.site:5173
+
+services:
+  appserver:
+    overrides:
+      environment:
+        LANDO_VITE_HOST: vite.bpo-site-update.lndo.site
+  node:
+    type: node:20
+    ssl: true
+    scanner: false
+    overrides:
+      environment:
+        LANDO_VITE_HOST: vite.bpo-site-update.lndo.site
+
+tooling:
+  npm:
+    service: node
+    description: Executa npm no container Node
+  node:
+    service: node
+    description: Executa node no container Node
+  npx:
+    service: node
+    description: Executa npx no container Node
+  artisan:
+    service: appserver
+    cmd: php artisan
+    description: Atalho para php artisan
+  package:
+    service: appserver
+    cmd: bash /app/deploy/build-package.sh
+    description: Gera o pacote de deploy para hospedagem compartilhada em dist/

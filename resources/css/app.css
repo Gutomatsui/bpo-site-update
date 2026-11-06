@@ -1,0 +1,157 @@
+@import 'tailwindcss';
+@import '@fontsource-variable/plus-jakarta-sans/wght.css';
+
+@source '../**/*.blade.php';
+@source '../**/*.js';
+@source '../../config/site.php';
+
+
+@theme {
+    --font-sans: 'Plus Jakarta Sans Variable', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+
+    /* Identidade Solution BPO — tons extraídos do CSS original (estilos.css) */
+    --color-brand: #025893;        /* azul principal */
+    --color-brand-light: #1783cc;  /* azul claro */
+    --color-royal: #1a428a;        /* azul royal */
+    --color-navy: #091124;         /* azul-marinho */
+    --color-navy-700: #0f1d3a;
+    --color-navy-600: #1c386c;
+    --color-accent: #ffa235;       /* laranja/dourado de destaque */
+    --color-accent-dark: #e8891a;
+    --color-ink: #0f1b33;          /* texto principal */
+    --color-muted: #51607a;        /* texto secundário */
+    --color-surface: #f4f7fb;      /* fundo claro de seções */
+
+    --shadow-soft: 0 1px 2px rgb(9 17 36 / 0.04), 0 8px 24px -8px rgb(9 17 36 / 0.12);
+    --shadow-lift: 0 2px 4px rgb(9 17 36 / 0.04), 0 24px 48px -16px rgb(9 17 36 / 0.24);
+
+    --ease-out-soft: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+@layer base {
+    html {
+        scroll-padding-top: 5.5rem;
+        -webkit-tap-highlight-color: transparent;
+    }
+
+    ::selection {
+        background: var(--color-accent);
+        color: var(--color-navy);
+    }
+
+    :focus-visible {
+        outline: 3px solid var(--color-accent);
+        outline-offset: 3px;
+        border-radius: 6px;
+    }
+
+    [x-cloak] {
+        display: none !important;
+    }
+}
+
+@layer components {
+    .container-site {
+        @apply mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8;
+    }
+
+    .section {
+        @apply py-20 sm:py-24 lg:py-28;
+    }
+
+    .eyebrow {
+        @apply inline-flex items-center gap-2 text-xs font-bold uppercase tracking-[0.18em] text-brand;
+    }
+
+    .eyebrow::before {
+        content: '';
+        @apply h-0.5 w-6 rounded-full bg-accent;
+    }
+
+    .heading-section {
+        @apply mt-4 text-3xl font-extrabold tracking-tight text-balance text-navy sm:text-4xl lg:text-[2.75rem] lg:leading-[1.15];
+    }
+
+    .lead {
+        @apply mt-5 text-lg leading-relaxed text-pretty text-muted;
+    }
+
+    .btn {
+        @apply inline-flex items-center justify-center gap-2 rounded-full px-6 py-3.5 text-sm font-bold transition duration-300 ease-out-soft;
+    }
+
+    .btn-accent {
+        @apply bg-accent text-navy shadow-[0_10px_30px_-10px_rgb(255_162_53/0.8)] hover:-translate-y-0.5 hover:bg-[#ffb35c] hover:shadow-[0_16px_36px_-12px_rgb(255_162_53/0.9)] active:translate-y-0;
+    }
+
+    .btn-ghost-light {
+        @apply border border-white/25 text-white hover:border-white/60 hover:bg-white/10;
+    }
+
+    .prose-answer p + p,
+    .prose-answer p + ul {
+        @apply mt-3;
+    }
+
+    .prose-answer ul {
+        @apply mt-3 space-y-2;
+    }
+
+    .prose-answer li {
+        @apply relative pl-5;
+    }
+
+    .prose-answer li::before {
+        content: '';
+        @apply absolute left-0 top-[0.6em] size-2 rounded-full bg-accent;
+    }
+
+    .prose-answer strong {
+        @apply font-semibold text-navy;
+    }
+}
+
+/* Swiper — integração visual com a identidade */
+.hero-swiper .swiper-pagination-bullet {
+    @apply m-0! h-1.5 w-4 rounded-full bg-white/50 sm:w-6 opacity-100 transition-all duration-500;
+}
+
+.hero-swiper .swiper-pagination-bullet-active {
+    @apply w-7 bg-accent sm:w-10;
+}
+
+.testimonials-swiper .swiper-pagination-bullet {
+    @apply mx-1! size-2 bg-navy/25 opacity-100 transition-all duration-300;
+}
+
+.testimonials-swiper .swiper-pagination-bullet-active {
+    @apply w-6 rounded-full bg-accent;
+}
+
+/* Timeline — preenchimento progressivo controlado por --progress */
+.timeline-progress {
+    transform-origin: left center;
+    transform: scaleX(var(--progress, 0));
+}
+
+@media (max-width: 1023.98px) {
+    .timeline-progress {
+        transform-origin: center top;
+        transform: scaleY(var(--progress, 0));
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+    }
+
+    .timeline-progress {
+        --progress: 1;
+    }
+}
