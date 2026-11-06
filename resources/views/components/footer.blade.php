@@ -73,7 +73,9 @@
     </div>
 
     <div class="border-t border-white/10">
-        <div class="container-site flex flex-col items-center justify-between gap-2 py-6 text-xs text-white/50 sm:flex-row">
+        {{-- Espaço reservado para os botões flutuantes (canto inferior direito) não
+             cobrirem o copyright: embaixo no celular, à direita a partir do tablet. --}}
+        <div class="container-site flex flex-col items-center justify-between gap-2 pt-6 pb-[8.75rem] text-xs text-white/50 sm:flex-row sm:py-6 sm:pr-28">
             <p class="text-sm sm:text-xs">Copyright © {{ now()->year }} • {{ $site['name'] }}</p>
             <a href="#inicio" class="inline-flex min-h-11 items-center gap-1.5 transition hover:text-white">Voltar ao topo <x-icon name="chevron-down" class="size-3.5 rotate-180" /></a>
         </div>

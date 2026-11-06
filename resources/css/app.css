@@ -422,6 +422,123 @@
     from { fill: rgb(255 255 255 / 0.15); }
 }
 
+/* ------------------------------------------------------------------
+   Botões flutuantes (Voltar ao topo + WhatsApp)
+   ------------------------------------------------------------------ */
+.fab-stack {
+    right: max(1rem, env(safe-area-inset-right));
+    bottom: max(1rem, calc(env(safe-area-inset-bottom) + 0.5rem));
+}
+
+@media (min-width: 640px) {
+    .fab-stack {
+        right: max(1.5rem, env(safe-area-inset-right));
+        bottom: max(1.5rem, calc(env(safe-area-inset-bottom) + 0.5rem));
+    }
+}
+
+/* WhatsApp: anel branco de 3px + sombra (no mesmo box-shadow) */
+.fab-whatsapp {
+    box-shadow: 0 0 0 3px #fff, 0 12px 26px -8px rgb(9 17 36 / 0.38), 0 6px 14px -6px rgb(37 211 102 / 0.55);
+    transition: transform 0.3s var(--ease-out-soft), box-shadow 0.3s var(--ease-out-soft);
+}
+
+.fab-whatsapp:hover {
+    transform: translateY(-2px) scale(1.05);
+    box-shadow: 0 0 0 3px #fff, 0 18px 34px -10px rgb(9 17 36 / 0.45), 0 10px 20px -8px rgb(37 211 102 / 0.65);
+}
+
+/* Pulso discreto: um anel que se expande e some, a cada 6s, 4 vezes após o carregamento */
+.fab-pulse {
+    position: absolute;
+    inset: -3px;
+    border-radius: 9999px;
+    border: 2px solid #25d366;
+    opacity: 0;
+    pointer-events: none;
+    animation: fab-pulse 6s ease-out 2s 4;
+}
+
+.fab-whatsapp:is(:hover, :focus-visible) .fab-pulse {
+    animation: none;
+}
+
+@keyframes fab-pulse {
+    0% { transform: scale(1); opacity: 0.6; }
+    28%, 100% { transform: scale(1.5); opacity: 0; }
+}
+
+/* Voltar ao topo: base branca, anel de progresso, centro azul-marinho */
+.fab-top {
+    left: 50%;
+    translate: -50% 10px;
+    opacity: 0;
+    visibility: hidden;
+    box-shadow: 0 10px 22px -8px rgb(9 17 36 / 0.42);
+    transition: opacity 0.35s var(--ease-out-soft), translate 0.35s var(--ease-out-soft), visibility 0.35s, box-shadow 0.3s var(--ease-out-soft);
+}
+
+.fab-top.is-visible {
+    translate: -50% 0;
+    opacity: 1;
+    visibility: visible;
+}
+
+.fab-top.is-visible:hover {
+    translate: -50% -3px;
+    box-shadow: 0 16px 28px -10px rgb(9 17 36 / 0.5);
+}
+
+.fab-ring-track {
+    stroke: #d3dbe7;
+}
+
+.fab-ring-progress {
+    stroke: var(--color-accent);
+    transition: filter 0.4s;
+}
+
+.fab-top.is-complete .fab-ring-progress {
+    filter: drop-shadow(0 0 2px rgb(255 162 53 / 0.75));
+}
+
+/* Tooltips (somente dispositivos com mouse, a partir do tablet) */
+.fab-tooltip {
+    position: absolute;
+    top: 50%;
+    right: calc(100% + 14px);
+    translate: 6px -50%;
+    white-space: nowrap;
+    border-radius: 0.6rem;
+    background: var(--color-navy);
+    padding: 0.45rem 0.75rem;
+    font-size: 0.8125rem;
+    font-weight: 600;
+    line-height: 1.2;
+    color: #fff;
+    box-shadow: var(--shadow-soft);
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transition: opacity 0.2s, translate 0.2s var(--ease-out-soft), visibility 0.2s;
+}
+
+@media (min-width: 640px) {
+    .group:focus-visible > .fab-tooltip {
+        translate: 0 -50%;
+        opacity: 1;
+        visibility: visible;
+    }
+}
+
+@media (min-width: 640px) and (hover: hover) {
+    .group:hover > .fab-tooltip {
+        translate: 0 -50%;
+        opacity: 1;
+        visibility: visible;
+    }
+}
+
 @media (prefers-reduced-motion: reduce) {
     *,
     *::before,
@@ -430,5 +547,9 @@
         animation-iteration-count: 1 !important;
         transition-duration: 0.01ms !important;
         scroll-behavior: auto !important;
+    }
+
+    .fab-pulse {
+        display: none;
     }
 }
