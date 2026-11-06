@@ -132,11 +132,26 @@
     max-width: none;
     translate: -50% 0;
     scale: 0.72;
-    transform-origin: 50% 0;
+    /* Origem sobre a linha (y = 1px), igual à borda superior: o traço fica alinhado
+       ao pixel em qualquer escala e as duas bordas renderizam com o mesmo brilho. */
+    transform-origin: 50% 1px;
     pointer-events: none;
     transition:
         opacity 0.45s var(--ease-out-soft),
         translate 0.45s var(--ease-out-soft);
+}
+
+/* Borda superior: alinhada ao topo do header (4px acima da barra do logo).
+   A origem da escala fica sobre a linha (y = 1px), para ela não se deslocar. */
+.header-edge-top {
+    position: absolute;
+    top: -4px;
+    left: 50%;
+    max-width: none;
+    translate: -50% 0;
+    scale: 0.72;
+    transform-origin: 50% 1px;
+    pointer-events: none;
 }
 
 .header-notch[data-hidden] {
@@ -156,14 +171,17 @@
     opacity: 0.9;
 }
 
+/* As duas bordas usam sempre a mesma escala: mesmo mapeamento horizontal do gradiente. */
 @media (min-width: 640px) {
-    .header-notch {
+    .header-notch,
+    .header-edge-top {
         scale: 0.85;
     }
 }
 
 @media (min-width: 1024px) {
-    .header-notch {
+    .header-notch,
+    .header-edge-top {
         scale: 1;
     }
 }

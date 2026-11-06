@@ -3,7 +3,9 @@
 <header x-data="siteHeader" x-on:keydown.escape.window="close()"
         class="on-dark fixed inset-x-0 top-0 z-50 overflow-x-clip transition-all duration-500 ease-out-soft"
         :class="scrolled ? 'bg-navy/90 shadow-[0_10px_30px_-12px_rgb(0_0_0/0.5)] backdrop-blur-xl' : 'bg-navy'">
-    <div class="h-1 bg-gradient-to-r from-brand via-brand-light to-accent" aria-hidden="true"></div>
+    {{-- Faixa superior de 4px (altura inalterada): a linha animada de 2px é desenhada
+         pelo SVG .header-edge-top, alinhado ao logo como a borda inferior. --}}
+    <div class="h-1" aria-hidden="true"></div>
     <div class="container-site flex items-center justify-between gap-6 transition-[height] duration-500 ease-out-soft"
          :class="scrolled ? 'h-16 lg:h-[4.5rem]' : 'h-[4.5rem] lg:h-20'">
         {{-- Logo + recorte em V (assinatura do site original). O wrapper ocupa a altura
@@ -14,6 +16,14 @@
                 <picture class="block"><source srcset="{{ asset('assets/images/logo/logo-solution.webp') }}" type="image/webp"><img src="{{ asset('assets/images/logo/logo-solution.png') }}" alt="{{ $site['name'] }}"
                      width="199" height="100" class="h-11 w-auto transition-all duration-500 lg:h-12" :class="scrolled && 'lg:h-11'"></picture>
             </a>
+
+            {{-- Borda superior: mesmo tamanho, centro e escala do SVG inferior e o MESMO
+                 gradiente animado (#header-edge-gradient). Uma única animação alimenta as
+                 duas bordas: velocidade e fase são idênticas por construção. --}}
+            <svg class="header-edge-top" width="8000" height="4" viewBox="0 0 8000 4" aria-hidden="true" focusable="false">
+                <path class="header-notch-line" d="M0 1 H8000"
+                      stroke="url(#header-edge-gradient)" vector-effect="non-scaling-stroke" />
+            </svg>
 
             {{-- Decorativo: 8000px de largura centrados no logo, recortados pelo header
                  (overflow-x: clip). Um único path desenha a borda inteira, incluindo o V. --}}

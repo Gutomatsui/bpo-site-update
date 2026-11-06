@@ -46,9 +46,10 @@ export default () => ({
     },
 
     /**
-     * A borda usa uma animação SMIL (gradiente percorrendo um único path).
-     * Movimento reduzido: contorno estático. Fora do topo: animação pausada,
-     * para não gastar CPU com um elemento invisível.
+     * As duas bordas (superior e inferior com o V) usam o MESMO gradiente com uma
+     * única animação SMIL, definida no SVG do recorte. Por isso ela continua rodando
+     * durante a rolagem: a borda superior permanece animada no header compacto.
+     * Movimento reduzido: as duas bordas ficam estáticas.
      */
     setupNotchAnimation() {
         const svg = this.$refs.notch;
@@ -57,13 +58,7 @@ export default () => ({
         if (prefersReducedMotion()) {
             svg.pauseAnimations();
             svg.setCurrentTime(0);
-            return;
         }
-
-        this.$watch('showNotch', (visible) => {
-            visible ? svg.unpauseAnimations() : svg.pauseAnimations();
-        });
-        if (!this.showNotch) svg.pauseAnimations();
     },
 
     toggle() {
