@@ -18,7 +18,7 @@
                     <li class="group relative flex gap-6 lg:flex-col lg:items-center lg:gap-0 lg:text-center" data-timeline-step>
                         <div class="relative z-10 shrink-0">
                             <div class="grid size-14 place-items-center rounded-2xl bg-navy shadow-lift ring-4 ring-white transition duration-500 ease-out-soft group-hover:-translate-y-1 group-hover:bg-navy-600 lg:size-16">
-                                <img src="{{ asset($step['icon']) }}" alt="" width="60" height="60" loading="lazy" class="size-8 object-contain lg:size-9">
+                                <x-picture :src="str_replace('.png', '', $step['icon'])" ext="png" alt="" width="60" height="60" img-class="size-8 object-contain lg:size-9" />
                             </div>
                             <span class="absolute -right-2.5 -top-2.5 grid size-7 place-items-center rounded-full bg-accent text-xs font-extrabold text-navy ring-4 ring-white">
                                 {{ $loop->iteration }}
@@ -27,7 +27,7 @@
                         <div class="pt-1 lg:mt-7 lg:px-1 lg:pt-0">
                             <p class="text-xs font-bold uppercase tracking-[0.16em] text-brand">Etapa {{ str_pad($loop->iteration, 2, '0', STR_PAD_LEFT) }}</p>
                             <h3 class="mt-2 text-lg font-bold leading-snug text-navy">{{ $step['title'] }}</h3>
-                            <p class="mt-2.5 text-[0.95rem] leading-relaxed text-muted">{{ $step['text'] }}</p>
+                            <p class="mt-2.5 text-base leading-relaxed text-muted lg:text-[0.95rem]">{{ $step['text'] }}</p>
                         </div>
                     </li>
                 @endforeach

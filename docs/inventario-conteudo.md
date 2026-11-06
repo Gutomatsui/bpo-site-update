@@ -80,6 +80,14 @@ Peso: PNG ~470–590 KB → WebP 1366 px 34–65 KB / WebP 768 px 19–30 KB.
 | `icon-cel`, `icon-email`, `icon-instagram`, `icon-pin`, `icon-site`, `icon-check`, `seta-direita-menor` | CSS / HTML | `public/assets/icons/ui/` | Recuperados; substituídos por SVG inline na nova interface | OK (não exibidos) |
 | `icon-nav`, `icon-nav-open`, `triangulo-topo` | CSS | `docs/arquivo-original/nao-utilizadas/` | Elementos do layout antigo | Arquivada |
 
+### Derivados técnicos (06/11/2026 — etapa de SEO/performance)
+
+| Arquivo | Origem | Uso | Status |
+|---|---|---|---|
+| `public/assets/images/og/solution-bpo-og.jpg` (1200×630) | `banner3.png` inteiro, centralizado sobre `#091124` | Open Graph / Twitter | Gerada |
+| `public/assets/images/banners/banner{3..6}-480.webp` | Banners originais redimensionados | Banner em celulares | Gerada |
+| `public/assets/icons/{beneficios,passos}/*.webp` | Ícones originais (WebP sem perda) | Benefícios e timeline | Gerada |
+
 Não restou nenhuma dependência de imagens hospedadas no domínio antigo.
 
 ## 3. Textos preservados

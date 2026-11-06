@@ -7,7 +7,7 @@
                 <div class="relative isolate overflow-hidden rounded-[2rem] bg-navy p-10 shadow-lift sm:p-14">
                     <div class="pointer-events-none absolute -right-16 -top-16 -z-10 size-72 rounded-full bg-brand/50 blur-3xl" aria-hidden="true"></div>
                     <div class="pointer-events-none absolute -bottom-20 -left-10 -z-10 size-56 rounded-full bg-accent/15 blur-3xl" aria-hidden="true"></div>
-                    <img src="{{ asset('assets/images/logo/logo-solution.png') }}" alt="Solution Business BPO" width="199" height="100" loading="lazy" class="h-20 w-auto sm:h-24">
+                    <picture class="block"><source srcset="{{ asset('assets/images/logo/logo-solution.webp') }}" type="image/webp"><img src="{{ asset('assets/images/logo/logo-solution.png') }}" alt="Solution Business BPO" width="199" height="100" loading="lazy" class="h-20 w-auto sm:h-24"></picture>
                     <x-icon name="quote" class="mt-12 size-10 text-accent" />
                     <p class="mt-4 text-2xl font-bold leading-snug text-white sm:text-3xl">{{ $about['closing'] }}</p>
                 </div>
@@ -42,8 +42,8 @@
                     <dl class="mt-8 grid gap-3 sm:grid-cols-3">
                         @foreach ($director['facts'] as $fact)
                             <div class="rounded-2xl bg-surface p-4 ring-1 ring-slate-200/70">
-                                <dt class="text-[0.7rem] font-bold uppercase tracking-[0.14em] text-accent-dark">{{ $fact['label'] }}</dt>
-                                <dd class="mt-1.5 text-sm font-semibold leading-snug text-navy">{{ $fact['value'] }}</dd>
+                                <dt class="text-xs font-bold uppercase tracking-[0.14em] text-accent-ink">{{ $fact['label'] }}</dt>
+                                <dd class="mt-1.5 text-base font-semibold leading-snug text-navy lg:text-sm">{{ $fact['value'] }}</dd>
                             </div>
                         @endforeach
                     </dl>

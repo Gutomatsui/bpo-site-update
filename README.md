@@ -46,6 +46,14 @@ O site **não usa banco de dados** (sessão e cache em arquivo). O MySQL 8 vem d
 
 Depois de editar o `config/site.php`, rode `lando artisan optimize:clear`.
 
+## SEO
+
+- Metadados por página: `App\Support\Seo::page()` (ver `HomeController`).
+- `SITE_URL` (padrão `https://www.solutionbpo.com.br`) é a base de canonical, Open Graph, sitemap e JSON-LD, inclusive no Lando.
+- `/robots.txt` e `/sitemap.xml` são rotas Laravel. Só `APP_ENV=production` libera a indexação; os demais ambientes enviam `noindex` e, opcionalmente, pedem senha (`STAGING_AUTH_USER`/`STAGING_AUTH_PASSWORD`).
+- Páginas do sitemap: `config/site.php` → `sitemap` (preencha `lastmod` só com uma data real).
+- Relatório da etapa: [docs/RELATORIO_SEO_RESPONSIVIDADE.md](docs/RELATORIO_SEO_RESPONSIVIDADE.md).
+
 ## Estrutura
 
 ```text

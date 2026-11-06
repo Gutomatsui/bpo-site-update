@@ -21,13 +21,41 @@ return [
     'name' => 'Solution Business BPO',
     'short_name' => 'Solution BPO',
 
+    /*
+    | URL canônica oficial. Usada em canonical, Open Graph, sitemap e JSON-LD,
+    | inclusive no ambiente local, para nunca publicar URLs do Lando.
+    */
+    'url' => rtrim(env('SITE_URL', 'https://www.solutionbpo.com.br'), '/'),
+
     'seo' => [
-        'title' => 'Solution Business BPO | BPO Financeiro em Santos/SP',
-        'description' => 'Terceirizando a gestão financeira com a Solution Business BPO você mantém as finanças de sua empresa em dia e investe o seu tempo nas atividades principais da sua empresa.',
-        'og_image' => 'assets/images/banners/banner3.png',
-        'og_image_width' => 1366,
-        'og_image_height' => 525,
+        // Padrão da home. Páginas futuras usam "Título da página | Solution BPO".
+        'title' => 'BPO Financeiro e Terceirização Financeira | Solution BPO',
+        'title_suffix' => ' | Solution BPO',
+        'description' => 'Simplifique a gestão financeira da sua empresa com a Solution BPO. Serviços de faturamento, contas a pagar, integração contábil e relatórios.',
+        // Imagem 1200×630 (proporção 1,91:1) montada a partir do banner original, sem cortes.
+        'og_image' => 'assets/images/og/solution-bpo-og.jpg',
+        'og_image_width' => 1200,
+        'og_image_height' => 630,
+        'og_image_alt' => 'Solution Business BPO — Sua empresa é a nossa prioridade. Gestão de contas a pagar.',
         'locale' => 'pt_BR',
+    ],
+
+    /*
+    | Páginas públicas e indexáveis incluídas no sitemap.xml.
+    | "lastmod" só deve ser preenchido com uma data real de alteração do
+    | conteúdo (formato AAAA-MM-DD). Sem data confiável, deixe null.
+    */
+    'sitemap' => [
+        ['path' => '/', 'lastmod' => null],
+    ],
+
+    /*
+    | Proteção opcional de ambientes de teste/homologação publicados
+    | (HTTP Basic Auth). Ignorada quando APP_ENV=production.
+    */
+    'staging_auth' => [
+        'user' => env('STAGING_AUTH_USER'),
+        'password' => env('STAGING_AUTH_PASSWORD'),
     ],
 
     'contact' => [
