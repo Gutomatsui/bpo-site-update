@@ -61,6 +61,24 @@
 }
 
 @layer components {
+    /* Ícones das abas de serviços: o PNG original (branco) vira máscara e a cor
+       vem de currentColor, garantindo contraste em todos os estados. */
+    .service-tab-icon {
+        display: block;
+        width: 1.75rem;
+        height: 1.5rem;
+        background-color: currentColor;
+        -webkit-mask: var(--icon) center / contain no-repeat;
+        mask: var(--icon) center / contain no-repeat;
+    }
+
+    @media (forced-colors: active) {
+        .service-tab-icon {
+            forced-color-adjust: none;
+            background-color: CanvasText;
+        }
+    }
+
     .container-site {
         @apply mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8;
     }

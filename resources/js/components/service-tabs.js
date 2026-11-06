@@ -12,7 +12,8 @@ export default (ids) => ({
     },
 
     onKeydown(event) {
-        const keys = ['ArrowRight', 'ArrowLeft', 'Home', 'End'];
+        // Setas laterais e verticais: no celular as abas ficam empilhadas.
+        const keys = ['ArrowRight', 'ArrowDown', 'ArrowLeft', 'ArrowUp', 'Home', 'End'];
         if (!keys.includes(event.key)) return;
         event.preventDefault();
 
@@ -20,7 +21,9 @@ export default (ids) => ({
         const last = this.ids.length - 1;
         const next = {
             ArrowRight: index === last ? 0 : index + 1,
+            ArrowDown: index === last ? 0 : index + 1,
             ArrowLeft: index === 0 ? last : index - 1,
+            ArrowUp: index === 0 ? last : index - 1,
             Home: 0,
             End: last,
         }[event.key];
