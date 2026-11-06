@@ -18,14 +18,27 @@ class SeoController extends Controller
         return response(implode("\n", $lines)."\n", 200, ['Content-Type' => 'text/plain; charset=UTF-8']);
     }
 
+    /**
+     * Gerado sem Blade: com short_open_tag ativo (comum em hospedagem
+     * compartilhada) o "<?xml" dentro de uma view quebra a compilação.
+     */
     public function sitemap(): Response
     {
         $urls = [
             ['loc' => rtrim(config('app.url'), '/').'/', 'changefreq' => 'monthly', 'priority' => '1.0'],
         ];
 
-        return response()
-            ->view('seo.sitemap', ['urls' => $urls])
-            ->header('Content-Type', 'application/xml; charset=UTF-8');
+        $xml = '<?xml version="1.0" encoding="UTF-8"?>'."\n";
+        $xml .= '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">'."\n";
+        foreach ($urls as $url) {
+            $xml .= '    <url>'."\n";
+            $xml .= '        <loc>'.htmlspecialchars($url['loc'], ENT_XML1).'</loc>'."\n";
+            $xml .= '        <changefreq>'.$url['changefreq'].'</changefreq>'."\n";
+            $xml .= '        <priority>'.$url['priority'].'</priority>'."\n";
+            $xml .= '    </url>'."\n";
+        }
+        $xml .= '</urlset>'."\n";
+
+        return response($xml, 200, ['Content-Type' => 'application/xml; charset=UTF-8']);
     }
 }

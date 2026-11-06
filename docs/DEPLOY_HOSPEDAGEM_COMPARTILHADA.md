@@ -17,6 +17,33 @@
 
 ## 2. Organização dos arquivos
 
+Existem dois modos de pacote. **O padrão é o modo "raiz".**
+
+### Modo "raiz" (padrão): `index.php` na raiz pública
+
+Use quando a hospedagem só permite usar a pasta pública (`public_html`). O conteúdo de `public/` (index, build, assets, favicon) vai para a raiz, ao lado das pastas do Laravel:
+
+```text
+/home/USUARIO/public_html/
+├── index.php            <- deploy/shared-hosting/raiz/index.php (caminhos a partir da raiz)
+├── .htaccess            <- deploy/shared-hosting/raiz/.htaccess (bloqueia as pastas internas)
+├── build/  assets/  favicon.ico  favicon-32.png  apple-touch-icon.png  icon-192.png
+├── app/  bootstrap/  config/  database/  resources/  routes/  storage/  vendor/
+│     └── cada uma com um .htaccess "Require all denied" (segunda camada de proteção)
+├── artisan  composer.json  composer.lock
+└── .env                 <- criado no servidor (ver seção 5)
+```
+
+Proteções do modo raiz (validadas em Apache + PHP 8.3 padrão, com `short_open_tag` ativo):
+
+- `/app`, `/bootstrap`, `/config`, `/database`, `/resources`, `/routes`, `/storage` e `/vendor` → **403**;
+- `/.env`, `/.htaccess`, `/artisan`, `/composer.json|lock`, `/package.json`, `/vite.config.js`, `*.md`, `*.log` → **403**;
+- listagem de diretórios desativada (`/assets/` e `/build/` → 403).
+
+> Importante: neste modo, a proteção depende do Apache respeitar o `.htaccess`. Depois do upload, **sempre** teste `https://www.solutionbpo.com.br/.env` e `/vendor/autoload.php`: os dois precisam retornar 403. Se retornarem 200 ou mostrarem conteúdo, tire o site do ar e fale com o provedor.
+
+### Modo "separado": núcleo fora da pasta pública (mais seguro, quando permitido)
+
 O núcleo do Laravel fica **fora** da pasta pública. Só `public_html` é acessível pela web.
 
 ```text
@@ -47,15 +74,19 @@ lando composer install
 lando npm install
 lando npm run build        # gera public/build (assets com hash + manifest.json)
 lando artisan test         # testes automatizados
-lando package              # gera dist/solutionbpo-AAAAMMDD-HHMM.tar.gz
+lando package              # modo raiz     -> dist/solutionbpo-raiz-AAAAMMDD-HHMM.tar.gz
+lando package separado     # modo separado -> dist/solutionbpo-separado-AAAAMMDD-HHMM.tar.gz
 ```
 
 O script `deploy/build-package.sh`:
 
 1. copia o núcleo, sem `.git`, `node_modules`, `tests`, `docs`, `.env` e arquivos do Lando;
 2. roda `composer install --no-dev --optimize-autoloader`;
-3. monta `public_html/` com o conteúdo de `public/` e o `index.php` de produção;
-4. compacta tudo em `dist/` (fora do Git).
+3. move o conteúdo de `public/` para a raiz pública e coloca o `index.php` e o `.htaccess` do modo escolhido;
+4. no modo raiz, cria um `.htaccess` de bloqueio em cada pasta interna;
+5. compacta tudo em `dist/` (fora do Git).
+
+O `public/index.php` do projeto **não é alterado**: o Lando continua funcionando normalmente.
 
 ## 4. Upload
 
@@ -80,7 +111,17 @@ APP_KEY=            # gere uma chave NOVA, exclusiva de produção
 
 ## 6. Paths do index.php
 
-O arquivo `deploy/shared-hosting/public_html/index.php` usa:
+**Modo raiz:** `deploy/shared-hosting/raiz/index.php` usa caminhos relativos à própria raiz:
+
+```php
+require __DIR__.'/vendor/autoload.php';
+$app = require_once __DIR__.'/bootstrap/app.php';
+$app->usePublicPath(__DIR__);   // a raiz é a pasta pública (manifest do Vite, assets)
+```
+
+No modo raiz, o `.env` fica em `public_html/.env` e o `php artisan` roda dentro de `public_html/`.
+
+**Modo separado:** o arquivo `deploy/shared-hosting/public_html/index.php` usa:
 
 ```php
 define('LARAVEL_CORE', dirname(__DIR__).'/bpo-site-update');
@@ -95,7 +136,7 @@ O arquivo de manutenção (`storage/framework/maintenance.php`) também é lido 
 ## 7. Permissões e cache
 
 ```bash
-cd ~/bpo-site-update
+cd ~/public_html          # modo raiz   (modo separado: cd ~/bpo-site-update)
 find storage bootstrap/cache -type d -exec chmod 775 {} \;
 find storage bootstrap/cache -type f -exec chmod 664 {} \;
 chmod 640 .env
@@ -135,6 +176,7 @@ Se o provedor exigir `RewriteBase /` (alguns exigem), adicione a linha logo apó
 - [ ] `https://www.solutionbpo.com.br/sitemap.xml` abre.
 - [ ] `https://www.solutionbpo.com.br/contato` redireciona para `/#contato`.
 - [ ] `https://www.solutionbpo.com.br/.env` e `/assets/` retornam **403**.
+- [ ] Modo raiz: `/vendor/autoload.php`, `/config/site.php`, `/storage/logs/` e `/composer.json` retornam **403**.
 - [ ] O código-fonte da página **não** contém `noindex` e o canonical é `https://www.solutionbpo.com.br/`.
 - [ ] O console do navegador está sem erros; o PageSpeed Insights foi rodado em mobile e desktop.
 - [ ] A pré-visualização do link no WhatsApp/Facebook mostra a imagem do banner (Open Graph).
@@ -142,7 +184,7 @@ Se o provedor exigir `RewriteBase /` (alguns exigem), adicione a linha logo apó
 
 ## 10. Rollback
 
-1. Renomeie o `public_html` novo para `public_html-novo-AAAAMMDD`.
+1. Renomeie o `public_html` novo para `public_html-novo-AAAAMMDD` (no modo raiz, o site novo inteiro está nessa pasta).
 2. Restaure o backup do site antigo (passo 4.1) como `public_html`.
 3. Se o site antigo dependia de outras pastas ou banco, restaure-os do mesmo backup. O novo site não altera nenhum banco.
 4. A pasta `bpo-site-update/` pode continuar no servidor: fora de `public_html` ela não fica acessível.

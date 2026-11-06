@@ -28,7 +28,8 @@ Acesse: **https://bpo-site-update.lndo.site**
 | `lando npm …` / `lando node …` / `lando npx …` | Node 20 no container `node` |
 | `lando artisan test` | Testes automatizados |
 | `lando artisan optimize:clear` | Limpa os caches do Laravel |
-| `lando package` | Gera o pacote de deploy em `dist/` |
+| `lando package` | Pacote de deploy em `dist/`: modo raiz (`index.php` na raiz pública) |
+| `lando package separado` | Pacote com o núcleo fora do `public_html` |
 
 O site **não usa banco de dados** (sessão e cache em arquivo). O MySQL 8 vem da receita LAMP e fica disponível para expansões futuras (credenciais `lamp`/`lamp`, host `database`).
 
