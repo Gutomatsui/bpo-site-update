@@ -11,24 +11,25 @@
         </div>
 
         <div x-data="serviceTabs(@js(array_column($items, 'id')))" x-on:select-service.window="select($event.detail)" class="mt-12 lg:mt-14" data-reveal>
-            {{-- Abas --}}
+            {{-- Abas: coluna única no celular (até 767px), 2 colunas no tablet e 4 lado a lado no desktop. --}}
             <div role="tablist" aria-label="Serviços" x-on:keydown="onKeydown($event)"
-                 class="-mx-4 flex snap-x gap-2 overflow-x-auto px-4 pb-2 [scrollbar-width:none] sm:mx-0 sm:grid sm:grid-cols-2 sm:overflow-visible sm:px-0 lg:grid-cols-4 lg:gap-3 [&::-webkit-scrollbar]:hidden">
+                 class="grid grid-cols-1 gap-2.5 md:grid-cols-2 md:gap-3 lg:grid-cols-4">
                 @foreach ($items as $item)
                     <button type="button" role="tab" id="tab-{{ $item['id'] }}" aria-controls="painel-{{ $item['id'] }}"
                             x-on:click="select('{{ $item['id'] }}')"
                             :aria-selected="(active === '{{ $item['id'] }}').toString()" aria-selected="{{ $loop->first ? 'true' : 'false' }}"
                             :tabindex="active === '{{ $item['id'] }}' ? 0 : -1" tabindex="{{ $loop->first ? 0 : -1 }}"
-                            class="group relative flex shrink-0 snap-start items-center gap-3 rounded-2xl border px-4 py-3.5 text-left text-sm font-bold transition duration-300 ease-out-soft sm:px-5 sm:py-4"
+                            class="group relative flex w-full items-center gap-3 rounded-2xl border px-4 py-3.5 text-left text-sm font-bold transition duration-300 ease-out-soft sm:px-5 sm:py-4"
                             :class="active === '{{ $item['id'] }}'
                                 ? 'border-transparent bg-navy text-white shadow-lift'
-                                : 'border-slate-200 bg-white text-navy hover:border-brand/30 hover:shadow-soft'">
+                                : 'border-slate-300/80 bg-white text-navy hover:border-brand/40 hover:shadow-soft'">
+                        {{-- Os PNGs originais são brancos: usados como máscara, a cor do ícone vem
+                             do CSS (azul Solution no inativo, azul-marinho sobre o laranja no ativo). --}}
                         <span class="grid size-10 shrink-0 place-items-center rounded-xl transition"
-                              :class="active === '{{ $item['id'] }}' ? 'bg-accent' : 'bg-surface group-hover:bg-sky-50'">
-                            <img src="{{ asset($item['icon']) }}" alt="" width="36" height="25" class="max-h-6 w-auto max-w-7 object-contain"
-                                 :class="active === '{{ $item['id'] }}' && 'brightness-0'">
+                              :class="active === '{{ $item['id'] }}' ? 'bg-accent text-navy' : 'bg-brand/10 text-brand group-hover:bg-brand/15'">
+                            <span class="service-tab-icon" style="--icon: url('{{ asset($item['icon']) }}')" aria-hidden="true"></span>
                         </span>
-                        <span class="whitespace-nowrap sm:whitespace-normal">{{ $item['tab'] }}</span>
+                        <span>{{ $item['tab'] }}</span>
                     </button>
                 @endforeach
             </div>

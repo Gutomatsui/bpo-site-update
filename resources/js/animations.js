@@ -34,32 +34,6 @@ export function initAnimations() {
         });
     });
 
-    // Timeline "Como funciona": trilho preenchido conforme a rolagem + etapas em sequência.
-    gsap.utils.toArray('[data-timeline]').forEach((timeline) => {
-        const bar = timeline.querySelector('[data-timeline-progress]');
-        const steps = timeline.querySelectorAll('[data-timeline-step]');
-
-        gsap.fromTo(
-            bar,
-            { '--progress': 0 },
-            {
-                '--progress': 1,
-                ease: 'none',
-                scrollTrigger: { trigger: timeline, start: 'top 75%', end: 'bottom 60%', scrub: 0.6 },
-            },
-        );
-
-        steps.forEach((step) => {
-            gsap.from(step, {
-                y: 28,
-                opacity: 0,
-                duration: 0.7,
-                ease: 'power3.out',
-                scrollTrigger: { trigger: step, start: 'top 85%', once: true },
-            });
-        });
-    });
-
     // Recalcula posições após o carregamento de imagens/fontes.
     window.addEventListener('load', () => ScrollTrigger.refresh());
 }

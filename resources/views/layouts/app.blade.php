@@ -75,8 +75,6 @@
     </main>
 
     <x-footer :site="$site" />
-    <aside aria-label="Atendimento rápido">
-        <x-whatsapp-float :contact="$site['contact']" />
-    </aside>
+    <x-floating-actions :contact="$site['contact']" />
 </body>
 </html>

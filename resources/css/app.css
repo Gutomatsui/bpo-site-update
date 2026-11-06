@@ -61,6 +61,24 @@
 }
 
 @layer components {
+    /* Ícones das abas de serviços: o PNG original (branco) vira máscara e a cor
+       vem de currentColor, garantindo contraste em todos os estados. */
+    .service-tab-icon {
+        display: block;
+        width: 1.75rem;
+        height: 1.5rem;
+        background-color: currentColor;
+        -webkit-mask: var(--icon) center / contain no-repeat;
+        mask: var(--icon) center / contain no-repeat;
+    }
+
+    @media (forced-colors: active) {
+        .service-tab-icon {
+            forced-color-adjust: none;
+            background-color: CanvasText;
+        }
+    }
+
     .container-site {
         @apply mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8;
     }
@@ -220,16 +238,304 @@
     @apply w-6 rounded-full bg-accent;
 }
 
-/* Timeline — preenchimento progressivo controlado por --progress */
-.timeline-progress {
-    transform-origin: left center;
-    transform: scaleX(var(--progress, 0));
+/* ------------------------------------------------------------------
+   "Como funciona" — jornada vertical (scrollytelling)
+   --journey-progress (0 → 1) é definido pelo JS; sem JS fica completo.
+   ------------------------------------------------------------------ */
+.journey {
+    --journey-progress: 1;
 }
 
-@media (max-width: 1023.98px) {
-    .timeline-progress {
-        transform-origin: center top;
-        transform: scaleY(var(--progress, 0));
+.journey-rail-fill {
+    transform-origin: center top;
+    transform: scaleY(var(--journey-progress));
+}
+
+.journey-rail-head {
+    transform: translateY(calc(var(--journey-progress) * 100%));
+}
+
+.journey-bar {
+    transform-origin: left center;
+    transform: scaleX(var(--journey-progress));
+}
+
+/* Ícones da linha */
+.journey-node {
+    box-shadow: 0 0 0 4px #fff, 0 10px 24px -10px rgb(9 17 36 / 0.45);
+    transition: box-shadow 0.5s var(--ease-out-soft), background-color 0.5s var(--ease-out-soft);
+}
+
+.journey-node.is-done {
+    box-shadow: 0 0 0 4px #fff, 0 0 0 6px rgb(23 131 204 / 0.35);
+}
+
+.journey-node.is-active {
+    background-image: linear-gradient(145deg, var(--color-navy), var(--color-navy-600));
+    box-shadow: 0 0 0 4px #fff, 0 0 0 6px var(--color-accent), 0 16px 32px -12px rgb(255 162 53 / 0.55);
+}
+
+.journey-node.is-active img {
+    animation: journey-icon 0.8s var(--ease-out-soft) both;
+}
+
+.journey-end {
+    background: #fff;
+    color: #8392aa;
+    box-shadow: inset 0 0 0 2px var(--color-slate-200);
+    transition: background-color 0.5s var(--ease-out-soft), color 0.5s, box-shadow 0.5s;
+}
+
+.journey-end.is-done {
+    background: var(--color-accent);
+    color: var(--color-navy);
+    box-shadow: 0 0 0 4px #fff, 0 0 0 6px rgb(255 162 53 / 0.35), 0 14px 30px -12px rgb(255 162 53 / 0.6);
+    animation: journey-pop 0.6s var(--ease-out-soft) both;
+}
+
+/* Etapas */
+.journey-num {
+    color: #74839d; /* contraste ≥ 3:1 para texto grande */
+    transition: color 0.5s var(--ease-out-soft);
+}
+
+.journey-card.is-active .journey-num {
+    color: var(--color-brand);
+}
+
+.journey-card::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: var(--pad);
+    bottom: var(--pad);
+    width: 3px;
+    border-radius: 9999px;
+    background: linear-gradient(var(--color-brand-light), var(--color-accent));
+    opacity: 0;
+    transform: scaleY(0.4);
+    transition: opacity 0.5s var(--ease-out-soft), transform 0.5s var(--ease-out-soft);
+}
+
+.journey-card.is-active::before {
+    opacity: 1;
+    transform: none;
+}
+
+/* Painel: altura da ilustração ajustada à altura da tela (o painel sticky cabe na viewport) */
+.journey-stage {
+    height: clamp(8.5rem, calc(100vh - 39rem), 17rem);
+}
+
+/* Cenas: só a ativa aparece; as animações rodam uma vez e terminam na composição final */
+.journey-scene {
+    opacity: 0;
+    transform: translateY(10px);
+    transition: opacity 0.5s var(--ease-out-soft), transform 0.6s var(--ease-out-soft);
+}
+
+.journey-scene.is-active {
+    opacity: 1;
+    transform: none;
+}
+
+.journey-scene :is(.jr-pop, .jr-rise, .jr-bar, .jr-fly, .jr-spin, .jr-ring, .jr-toggle-knob) {
+    transform-box: fill-box;
+    transform-origin: center;
+}
+
+.journey-scene.is-active .jr-pop { animation: journey-pop 0.6s var(--ease-out-soft) var(--d, 0s) both; }
+.journey-scene.is-active .jr-rise { animation: journey-rise 0.7s var(--ease-out-soft) var(--d, 0s) both; }
+.journey-scene.is-active .jr-bar { transform-origin: center bottom; animation: journey-grow 0.8s var(--ease-out-soft) var(--d, 0s) both; }
+.journey-scene.is-active .jr-draw { stroke-dasharray: var(--len); animation: journey-draw 1.2s var(--ease-out-soft) var(--d, 0.2s) both; }
+.journey-scene.is-active .jr-flow { animation: journey-flow 2.2s linear both; }
+.journey-scene.is-active .jr-fly { animation: journey-fly 1.6s var(--ease-out-soft) var(--d, 0s) both; }
+.journey-scene.is-active .jr-scan { animation: journey-scan 1.6s ease-in-out 0.5s both; }
+.journey-scene.is-active .jr-spin { transform-origin: left center; animation: journey-spin 2s var(--ease-out-soft) 0.3s both; }
+.journey-scene.is-active .jr-ring { animation: journey-ring 1.6s var(--ease-out-soft) 1s both; }
+.journey-scene.is-active .jr-toggle-knob { animation: journey-toggle 0.5s var(--ease-out-soft) var(--d, 0s) both; }
+.journey-scene.is-active .jr-toggle-track { animation: journey-fade 0.5s var(--ease-out-soft) var(--d, 0s) both; }
+
+@keyframes journey-icon {
+    0% { transform: scale(0.8) rotate(-8deg); }
+    55% { transform: scale(1.1) rotate(3deg); }
+    100% { transform: none; }
+}
+
+@keyframes journey-pop {
+    0% { transform: scale(0.4); opacity: 0; }
+    70% { transform: scale(1.08); opacity: 1; }
+    100% { transform: none; opacity: 1; }
+}
+
+@keyframes journey-rise {
+    from { transform: translateY(14px); opacity: 0; }
+    to { transform: none; opacity: 1; }
+}
+
+@keyframes journey-grow {
+    from { transform: scaleY(0); }
+    to { transform: none; }
+}
+
+@keyframes journey-draw {
+    from { stroke-dashoffset: var(--len); }
+    to { stroke-dashoffset: 0; }
+}
+
+@keyframes journey-flow {
+    from { stroke-dashoffset: 84; opacity: 0; }
+    20% { opacity: 0.85; }
+    to { stroke-dashoffset: 0; opacity: 0.85; }
+}
+
+@keyframes journey-fly {
+    0% { transform: translate(0, 0) scale(1); opacity: 0; }
+    15% { opacity: 1; }
+    50% { transform: translate(84px, -62px) scale(0.85) rotate(8deg); }
+    100% { transform: translate(196px, 52px) scale(0.45); opacity: 0; }
+}
+
+@keyframes journey-scan {
+    0% { transform: translateX(0); opacity: 0; }
+    10%, 85% { opacity: 1; }
+    100% { transform: translateX(150px); opacity: 0; }
+}
+
+@keyframes journey-spin {
+    from { transform: rotate(-270deg); }
+    to { transform: none; }
+}
+
+@keyframes journey-ring {
+    0% { transform: scale(0.8); opacity: 0; }
+    50% { opacity: 0.6; }
+    100% { transform: none; opacity: 0.4; }
+}
+
+@keyframes journey-toggle {
+    from { transform: translateX(-20px); fill: #ffffff; }
+    to { transform: none; }
+}
+
+@keyframes journey-fade {
+    from { fill: rgb(255 255 255 / 0.15); }
+}
+
+/* ------------------------------------------------------------------
+   Botões flutuantes (Voltar ao topo + WhatsApp)
+   ------------------------------------------------------------------ */
+.fab-stack {
+    right: max(1rem, env(safe-area-inset-right));
+    bottom: max(1rem, calc(env(safe-area-inset-bottom) + 0.5rem));
+}
+
+@media (min-width: 640px) {
+    .fab-stack {
+        right: max(1.5rem, env(safe-area-inset-right));
+        bottom: max(1.5rem, calc(env(safe-area-inset-bottom) + 0.5rem));
+    }
+}
+
+/* WhatsApp: anel branco de 3px + sombra (no mesmo box-shadow) */
+.fab-whatsapp {
+    box-shadow: 0 0 0 3px #fff, 0 12px 26px -8px rgb(9 17 36 / 0.38), 0 6px 14px -6px rgb(37 211 102 / 0.55);
+    transition: transform 0.3s var(--ease-out-soft), box-shadow 0.3s var(--ease-out-soft);
+}
+
+.fab-whatsapp:hover {
+    transform: translateY(-2px) scale(1.05);
+    box-shadow: 0 0 0 3px #fff, 0 18px 34px -10px rgb(9 17 36 / 0.45), 0 10px 20px -8px rgb(37 211 102 / 0.65);
+}
+
+/* Pulso discreto: um anel que se expande e some, a cada 6s, 4 vezes após o carregamento */
+.fab-pulse {
+    position: absolute;
+    inset: -3px;
+    border-radius: 9999px;
+    border: 2px solid #25d366;
+    opacity: 0;
+    pointer-events: none;
+    animation: fab-pulse 6s ease-out 2s 4;
+}
+
+.fab-whatsapp:is(:hover, :focus-visible) .fab-pulse {
+    animation: none;
+}
+
+@keyframes fab-pulse {
+    0% { transform: scale(1); opacity: 0.6; }
+    28%, 100% { transform: scale(1.5); opacity: 0; }
+}
+
+/* Voltar ao topo: base branca, anel de progresso, centro azul-marinho */
+.fab-top {
+    left: 50%;
+    translate: -50% 10px;
+    opacity: 0;
+    visibility: hidden;
+    box-shadow: 0 10px 22px -8px rgb(9 17 36 / 0.42);
+    transition: opacity 0.35s var(--ease-out-soft), translate 0.35s var(--ease-out-soft), visibility 0.35s, box-shadow 0.3s var(--ease-out-soft);
+}
+
+.fab-top.is-visible {
+    translate: -50% 0;
+    opacity: 1;
+    visibility: visible;
+}
+
+.fab-top.is-visible:hover {
+    translate: -50% -3px;
+    box-shadow: 0 16px 28px -10px rgb(9 17 36 / 0.5);
+}
+
+.fab-ring-track {
+    stroke: #d3dbe7;
+}
+
+.fab-ring-progress {
+    stroke: var(--color-accent);
+    transition: filter 0.4s;
+}
+
+.fab-top.is-complete .fab-ring-progress {
+    filter: drop-shadow(0 0 2px rgb(255 162 53 / 0.75));
+}
+
+/* Tooltips (somente dispositivos com mouse, a partir do tablet) */
+.fab-tooltip {
+    position: absolute;
+    top: 50%;
+    right: calc(100% + 14px);
+    translate: 6px -50%;
+    white-space: nowrap;
+    border-radius: 0.6rem;
+    background: var(--color-navy);
+    padding: 0.45rem 0.75rem;
+    font-size: 0.8125rem;
+    font-weight: 600;
+    line-height: 1.2;
+    color: #fff;
+    box-shadow: var(--shadow-soft);
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transition: opacity 0.2s, translate 0.2s var(--ease-out-soft), visibility 0.2s;
+}
+
+@media (min-width: 640px) {
+    .group:focus-visible > .fab-tooltip {
+        translate: 0 -50%;
+        opacity: 1;
+        visibility: visible;
+    }
+}
+
+@media (min-width: 640px) and (hover: hover) {
+    .group:hover > .fab-tooltip {
+        translate: 0 -50%;
+        opacity: 1;
+        visibility: visible;
     }
 }
 
@@ -243,7 +549,7 @@
         scroll-behavior: auto !important;
     }
 
-    .timeline-progress {
-        --progress: 1;
+    .fab-pulse {
+        display: none;
     }
 }
