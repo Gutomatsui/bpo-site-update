@@ -15,10 +15,15 @@ const a11yPtBr = {
 
 /**
  * Controle de autoplay acessível (WCAG 2.2.2 — Pausar, parar, ocultar):
- *  - botão de pausar/retomar sempre sincronizado com o estado real do Swiper;
- *  - pausa enquanto o foco do teclado estiver dentro do carrossel;
- *  - pausa quando o carrossel sai da tela;
+ *  - botão de pausar/retomar: "playing" é a escolha do visitante e só muda por ele
+ *    (ou por interação que o próprio Swiper trate como parada definitiva);
+ *  - suspende enquanto o foco do TECLADO estiver dentro do carrossel (clique de mouse não);
+ *  - suspende quando o carrossel sai da tela;
  *  - nunca inicia para quem prefere movimento reduzido.
+ *
+ * As suspensões usam stop()/start() do Swiper, não pause()/resume(): estes são feitos
+ * para pausas internas (transições) e podiam ser desfeitos sozinhos ou travar no
+ * último slide de carrosséis com "rewind".
  */
 function withAutoplayControl(options) {
     return {
@@ -26,6 +31,7 @@ function withAutoplayControl(options) {
         playing: false,
         autoplayAvailable: false,
         autoplayOptions: options,
+        syncAutoplay: () => {},
 
         setupAutoplay(swiper) {
             this.swiper = swiper;
@@ -37,46 +43,56 @@ function withAutoplayControl(options) {
                 swiper.autoplay?.stop();
             }
 
+            let internal = false; // start/stop disparados pela suspensão (não pelo visitante)
+            let focused = false;
+            let visible = true;
+
             swiper.on('autoplayStop', () => {
-                this.playing = false;
+                if (!internal) this.playing = false;
             });
             swiper.on('autoplayStart', () => {
-                this.playing = true;
+                if (!internal) this.playing = true;
             });
             swiper.on('lock unlock', () => {
                 this.autoplayAvailable = !reduced && !swiper.isLocked;
             });
 
-            let focused = false;
-            let visible = true;
-            const sync = () => {
-                if (!this.playing) return;
-                focused || !visible ? swiper.autoplay.pause() : swiper.autoplay.resume();
+            this.syncAutoplay = () => {
+                if (!this.autoplayAvailable) return;
+                const shouldRun = this.playing && !focused && visible;
+                if (shouldRun === swiper.autoplay.running) return;
+                internal = true;
+                if (shouldRun) {
+                    const current = typeof swiper.params.autoplay === 'object' ? swiper.params.autoplay : {};
+                    swiper.params.autoplay = { ...current, ...this.autoplayOptions };
+                    swiper.autoplay.start();
+                } else {
+                    swiper.autoplay.stop();
+                }
+                internal = false;
             };
-            this.$el.addEventListener('focusin', () => {
+
+            this.$el.addEventListener('focusin', (e) => {
+                if (!e.target.matches(':focus-visible')) return;
                 focused = true;
-                sync();
+                this.syncAutoplay();
             });
             this.$el.addEventListener('focusout', (e) => {
                 if (!this.$el.contains(e.relatedTarget)) {
                     focused = false;
-                    sync();
+                    this.syncAutoplay();
                 }
             });
             new IntersectionObserver(([entry]) => {
                 visible = entry.isIntersecting;
-                sync();
+                this.syncAutoplay();
             }).observe(this.$el);
         },
 
         toggleAutoplay() {
             if (!this.swiper) return;
-            if (this.playing) {
-                this.swiper.autoplay.stop();
-            } else {
-                this.swiper.params.autoplay = { ...this.autoplayOptions };
-                this.swiper.autoplay.start();
-            }
+            this.playing = !this.playing;
+            this.syncAutoplay();
         },
     };
 }
@@ -125,7 +141,10 @@ export const heroSlider = () => {
 };
 
 export const testimonialsSlider = () => {
-    const autoplay = { delay: 8000, disableOnInteraction: true, pauseOnMouseEnter: true };
+    // Sem pausa por mouse: o card ocupa boa parte da tela e o cursor costuma repousar
+    // sobre ele, o que dava a impressão de carrossel travado. Após navegação manual, o
+    // autoplay continua. Pausar continua disponível pelo botão (e pelo foco do teclado).
+    const autoplay = { delay: 8000, disableOnInteraction: false, pauseOnMouseEnter: false };
 
     return {
         ...withAutoplayControl(autoplay),
