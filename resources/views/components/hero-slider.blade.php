@@ -1,6 +1,6 @@
 @props(['slides', 'width', 'height'])
 <section id="inicio" aria-roledescription="carrossel" aria-label="Destaques da Solution BPO"
-         class="on-dark relative isolate overflow-hidden bg-navy pb-10 pt-6 sm:pb-14 sm:pt-8 lg:pt-10">
+         class="on-dark relative isolate overflow-hidden bg-navy pb-10 pt-11 sm:pb-14 sm:pt-12 lg:pt-14">
     {{-- Fundo decorativo --}}
     <div class="pointer-events-none absolute inset-0 -z-10" aria-hidden="true">
         <div class="absolute -left-40 top-0 size-[36rem] rounded-full bg-brand/40 blur-[120px]"></div>

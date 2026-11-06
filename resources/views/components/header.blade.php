@@ -1,15 +1,52 @@
 @props(['site'])
 @php($nav = $site['navigation'])
 <header x-data="siteHeader" x-on:keydown.escape.window="close()"
-        class="on-dark fixed inset-x-0 top-0 z-50 transition-all duration-500 ease-out-soft"
+        class="on-dark fixed inset-x-0 top-0 z-50 overflow-x-clip transition-all duration-500 ease-out-soft"
         :class="scrolled ? 'bg-navy/90 shadow-[0_10px_30px_-12px_rgb(0_0_0/0.5)] backdrop-blur-xl' : 'bg-navy'">
-    <div class="h-1 bg-gradient-to-r from-brand via-brand-light to-accent" aria-hidden="true"></div>
+    {{-- Faixa superior de 4px (altura inalterada): a linha animada de 2px é desenhada
+         pelo SVG .header-edge-top, alinhado ao logo como a borda inferior. --}}
+    <div class="h-1" aria-hidden="true"></div>
     <div class="container-site flex items-center justify-between gap-6 transition-[height] duration-500 ease-out-soft"
          :class="scrolled ? 'h-16 lg:h-[4.5rem]' : 'h-[4.5rem] lg:h-20'">
-        <a href="#inicio" class="shrink-0" aria-label="{{ $site['name'] }} — voltar ao início">
-            <picture class="block"><source srcset="{{ asset('assets/images/logo/logo-solution.webp') }}" type="image/webp"><img src="{{ asset('assets/images/logo/logo-solution.png') }}" alt="{{ $site['name'] }}"
-                 width="199" height="100" class="h-11 w-auto transition-all duration-500 lg:h-12" :class="scrolled && 'lg:h-11'"></picture>
-        </a>
+        {{-- Logo + recorte em V (assinatura do site original). O wrapper ocupa a altura
+             da barra, então "top: 100%" é exatamente a borda inferior do header, e
+             "left: 50%" é o centro real do logo em qualquer resolução. --}}
+        <div class="relative flex shrink-0 items-center self-stretch">
+            <a href="#inicio" class="relative z-10" aria-label="{{ $site['name'] }} — voltar ao início">
+                <picture class="block"><source srcset="{{ asset('assets/images/logo/logo-solution.webp') }}" type="image/webp"><img src="{{ asset('assets/images/logo/logo-solution.png') }}" alt="{{ $site['name'] }}"
+                     width="199" height="100" class="h-11 w-auto transition-all duration-500 lg:h-12" :class="scrolled && 'lg:h-11'"></picture>
+            </a>
+
+            {{-- Borda superior: mesmo tamanho, centro e escala do SVG inferior e o MESMO
+                 gradiente animado (#header-edge-gradient). Uma única animação alimenta as
+                 duas bordas: velocidade e fase são idênticas por construção. --}}
+            <svg class="header-edge-top" width="8000" height="4" viewBox="0 0 8000 4" aria-hidden="true" focusable="false">
+                <path class="header-notch-line" d="M0 1 H8000"
+                      stroke="url(#header-edge-gradient)" vector-effect="non-scaling-stroke" />
+            </svg>
+
+            {{-- Decorativo: 8000px de largura centrados no logo, recortados pelo header
+                 (overflow-x: clip). Um único path desenha a borda inteira, incluindo o V. --}}
+            <svg class="header-notch" x-ref="notch" :data-hidden="showNotch ? null : ''"
+                 width="8000" height="44" viewBox="0 0 8000 44" aria-hidden="true" focusable="false">
+                <defs>
+                    <linearGradient id="header-edge-gradient" gradientUnits="userSpaceOnUse"
+                                    x1="0" y1="0" x2="1200" y2="0" spreadMethod="repeat">
+                        <stop offset="0" stop-color="#ffffff" />
+                        <stop offset="0.33" stop-color="#1783cc" />
+                        <stop offset="0.66" stop-color="#ffa235" />
+                        <stop offset="1" stop-color="#ffffff" />
+                        <animateTransform attributeName="gradientTransform" type="translate"
+                                          from="0 0" to="1200 0" dur="5s" repeatCount="indefinite" />
+                    </linearGradient>
+                </defs>
+                {{-- Preenchimento do V: mesmo azul-marinho do header --}}
+                <path class="header-notch-fill" d="M3932 0 L4000 40 L4068 0 Z" />
+                {{-- Linha luminosa: borda horizontal + diagonais do V em um só traçado --}}
+                <path class="header-notch-line" d="M0 1 H3932 L4000 40 L4068 1 H8000"
+                      stroke="url(#header-edge-gradient)" vector-effect="non-scaling-stroke" />
+            </svg>
+        </div>
 
         <nav aria-label="Navegação principal" class="hidden lg:block">
             <ul class="flex items-center gap-1">
